@@ -45,6 +45,10 @@
 
     #user
     sudo firefox git qtile alacritty rustup python3 zsh
+
+    #develop
+    autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
+    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
