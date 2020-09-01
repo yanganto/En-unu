@@ -14,6 +14,7 @@
   # TODO: handle efi grub parpmeter build
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.tmpOnTmpfs = true;
 
   # TODO: passing variable into host
   networking.hostName = "nixos"; 
@@ -25,7 +26,15 @@
   networking.useDHCP = false;
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    inputMethod = {
+      enabled = "fcitx";
+      fcitx.engines = with pkgs.fcitx-engines; [
+        chewing
+      ];
+    };
+  };
   console = {
     font = "Lat2-Terminus16";
     keyMap = "us";
@@ -34,6 +43,61 @@
     timeZone = "Asia/Taipei";
     hardwareClockInLocalTime = false;
   };
+  fonts = {
+    enableFontDir = true;
+    enableGhostscriptFonts = true;
+    fontconfig = {
+      enable = true;
+      includeUserConf = true;
+      defaultFonts = {
+        monospace = [
+          "WenQuanYi Micro Hei Mono"
+          "文泉驛等寬微米黑"
+          "Noto Sans Mono CJK TC"
+        ];
+
+        sansSerif = [
+          "WenQuanYi Micro Hei"
+          "文泉驛微米黑"
+          "Noto Sans CJK TC"
+        ];
+
+        serif = [
+          "WenQuanYi Micro Hei"
+          "文泉驛微米黑"
+          "Noto Sans CJK TC"
+        ];
+      };
+    };
+
+    fonts = with pkgs; [
+      iosevka
+      inconsolata
+      unifont
+
+      terminus_font
+      terminus_font_ttf
+
+      anonymousPro
+      source-code-pro
+      meslo-lg
+
+      wqy_microhei
+      wqy_zenhei
+
+      fira
+      fira-code
+      fira-mono
+
+      noto-fonts
+      noto-fonts-cjk
+
+      siji
+      font-awesome-ttf
+
+      powerline-fonts
+    ];
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -41,26 +105,22 @@
 
     #TODO: package overlay
     #core
-    wget neovim wpa_supplicant ripgrep
+    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh
 
     #user
-    sudo firefox git qtile alacritty rustup python3 zsh
+    sudo firefox git qtile alacritty rustup python3 nushell fcitx fcitx-engines.chewing neo-cowsay
 
     #develop
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
-    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo
+    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
+    pkg-config openssl
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  #   pinentryFlavor = "gnome3";
-  # };
-
-  # List services that you want to enable:
+  programs.zsh.enable = true;
+  programs.zsh.ohMyZsh = {
+    enable = true;
+    plugins = [ "git" "sudo" ];
+  };
 
   # TODO: service overlay
   # services.openssh.enable = true;
@@ -75,7 +135,7 @@
   hardware.pulseaudio.enable = true;
 
 
-
+  # TODO User overlay 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.defaultUserShell = "${pkgs.zsh}/bin/zsh";
   users.users.yanganto = {
