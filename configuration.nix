@@ -109,6 +109,7 @@
 
     #user
     sudo firefox git qtile alacritty rustup python3 nushell fcitx fcitx-engines.chewing neo-cowsay
+    pamixer
 
     #develop
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
@@ -121,6 +122,7 @@
     enable = true;
     plugins = [ "git" "sudo" ];
   };
+  programs.light.enable = true;
 
   # TODO: service overlay
   # services.openssh.enable = true;
