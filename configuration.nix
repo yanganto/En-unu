@@ -10,6 +10,7 @@
     ./interfaces.nix
     ../../Sekreto/networks.nix
   ];
+  nixpkgs.config.allowUnfree = true;
 
   # TODO: handle efi grub parpmeter build
   boot.loader.systemd-boot.enable = true;
@@ -19,6 +20,11 @@
   # TODO: passing variable into host
   networking.hostName = "nixos"; 
   networking.wireless.enable = true;
+
+  nixpkgs.config.packageOverrides = pkgs: {
+    my_fcitx_array = pkgs.callPackage /home/yanganto/.config/nixpkgs/fcitx-array/default.nix {};
+  };
+
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -31,7 +37,19 @@
     inputMethod = {
       enabled = "fcitx";
       fcitx.engines = with pkgs.fcitx-engines; [
-        chewing
+        chewing 
+        (
+          table-extra.overrideAttrs ( 
+            _: {
+              src = pkgs.fetchFromGitHub {
+                owner = "yanganto";
+                repo = "fcitx-table-extra";
+                rev = "3e60bf7118d3db8cb2c3e2b99e69395081f9d10e";
+                sha256 = "1qz6vhxjm2isjmpc8nplp559ab84z9lkzx2aw2z7f3m6x8v1fybh";
+              };
+            } 
+          )
+        )
       ];
     };
   };
@@ -102,20 +120,37 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-
     #TODO: package overlay
     #core
-    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh
+    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh busybox
 
     #user
-    sudo firefox git qtile alacritty rustup python3 nushell fcitx fcitx-engines.chewing neo-cowsay
-    pamixer
+    sudo firefox git qtile alacritty rustup python3 nushell neo-cowsay
+    fcitx fcitx-engines.chewing fcitx-engines.table-extra
+    pamixer 
 
     #develop
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
     gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
-    pkg-config openssl
+    pkg-config openssl gitAndTools.gitui gitAndTools.tig envdir fzf
+    universal-ctags
+
+    libvirt minikube kind docker kubectl
   ];
+  virtualisation = {
+    docker = {
+      enable = true;
+      enableOnBoot = false;
+      liveRestore = false;
+      package = pkgs.docker-edge;
+    };
+  };
+
+  fileSystems."/home/yanganto/data" = {
+    device = "/dev/disk/by-uuid/a0c969a0-54ff-4955-b175-eef80d727ce6";
+    fsType = "ext4";
+    options = [ "rw,noatime,nodiratime,discard,errors=remount-ro" ];
+  };
 
   programs.zsh.enable = true;
   programs.zsh.ohMyZsh = {
@@ -132,6 +167,9 @@
   services.xserver.xkbOptions = "eurosign:e";
   services.xserver.libinput.enable = true;
   services.xserver.windowManager.qtile.enable = true;
+
+  # handle video overlay
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   sound.enable = true;
   hardware.pulseaudio.enable = true;
@@ -150,10 +188,8 @@
       "audio"
       "docker"
       "netdata"
-      "networkmanager"
       "libvirtd"
       "vboxusers"
-      "wheel"
     ];
   };
 
