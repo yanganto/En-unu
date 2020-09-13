@@ -11,6 +11,18 @@
     ../../Sekreto/networks.nix
   ];
 
+  # hardware specific
+  nixpkgs.config.allowUnfree = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl.driSupport32Bit = true;
+
+  fileSystems."/home/yanganto/data" = {
+    # machine specific
+    device = "/dev/disk/by-uuid/a0c969a0-54ff-4955-b175-eef80d727ce6";
+    fsType = "ext4";
+    options = [ "rw,noatime,nodiratime,discard,errors=remount-ro" ];
+  };
+
   # TODO: handle efi grub parpmeter build
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
