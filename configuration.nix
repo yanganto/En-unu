@@ -31,7 +31,7 @@
     inputMethod = {
       enabled = "fcitx";
       fcitx.engines = with pkgs.fcitx-engines; [
-        chewing
+        chewing table-extra
       ];
     };
   };
@@ -108,7 +108,8 @@
     wget neovim wpa_supplicant ripgrep zsh oh-my-zsh
 
     #user
-    sudo firefox git qtile alacritty rustup python3 nushell fcitx fcitx-engines.chewing neo-cowsay
+    sudo firefox git qtile alacritty rustup python3 nushell neo-cowsay
+    fcitx fcitx-engines.chewing fcitx-engines.table-extra
     pamixer
 
     #develop
