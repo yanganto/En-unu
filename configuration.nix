@@ -129,7 +129,7 @@
     gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
     pkg-config openssl
 
-    kind docker
+    kind docker kubectl
   ];
 
   programs.zsh.enable = true;
