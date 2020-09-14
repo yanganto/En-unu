@@ -128,6 +128,8 @@
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
     gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
     pkg-config openssl
+
+    kind docker
   ];
 
   programs.zsh.enable = true;
@@ -168,6 +170,16 @@
       "vboxusers"
       "wheel"
     ];
+  };
+
+  # develop settings
+  virtualisation = {
+    docker = {
+      enable = true;
+      enableOnBoot = false;
+      liveRestore = false;
+      package = pkgs.docker-edge;
+    };
   };
 
   # TODO: move on and keep OS rolling 
