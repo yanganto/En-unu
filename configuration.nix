@@ -1,20 +1,39 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   imports = [ 
     ./hardware-configuration.nix
     ./interfaces.nix
+    ./video-card.nix
     ../../Sekreto/networks.nix
   ];
+  environment.systemPackages = with pkgs; [
+    #TODO: package overlay
+    #core
+    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh busybox
+    enlightenment.terminology pciutils
 
-  # hardware specific
-  nixpkgs.config.allowUnfree = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.driSupport32Bit = true;
+    #user
+    sudo firefox git qtile alacritty rustup python3 nushell neo-cowsay
+    fcitx fcitx-engines.chewing fcitx-engines.table-extra
+    
+    # TODO: Porting ibus-array 
+    # ibus ibus-engines.table  
+
+    # TODO: wait hime merge 
+    # hime = import ./hime/default.nix;  # use this when hime merged
+    pamixer xdotool
+
+    # linux develop
+    autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
+    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
+    pkg-config openssl pypi2nix
+
+    # cloud develop
+    kind docker kubectl
+  ];
 
   fileSystems."/home/yanganto/data" = {
     # machine specific
@@ -37,14 +56,15 @@
   # replicates the default behaviour.
   networking.useDHCP = false;
 
+
   # Select internationalisation properties.
   i18n = {
     defaultLocale = "en_US.UTF-8";
     inputMethod = {
       enabled = "fcitx";
-      fcitx.engines = with pkgs.fcitx-engines; [
-        chewing table-extra
-      ];
+      fcitx.engines = with pkgs.fcitx-engines; [ chewing table-extra ];
+      # enabled = "ibus"; 
+      # ibus.engines = with pkgs.ibus-engines; [ table ];
     };
   };
   console = {
@@ -83,29 +103,19 @@
     };
 
     fonts = with pkgs; [
-      iosevka
-      inconsolata
-      unifont
+      iosevka inconsolata unifont
 
-      terminus_font
-      terminus_font_ttf
+      terminus_font terminus_font_ttf
 
-      anonymousPro
-      source-code-pro
-      meslo-lg
+      anonymousPro source-code-pro meslo-lg
 
-      wqy_microhei
-      wqy_zenhei
+      wqy_microhei wqy_zenhei
 
-      fira
-      fira-code
-      fira-mono
+      fira fira-code fira-mono
 
-      noto-fonts
-      noto-fonts-cjk
+      noto-fonts noto-fonts-cjk
 
-      siji
-      font-awesome-ttf
+      siji font-awesome-ttf
 
       powerline-fonts
     ];
@@ -113,24 +123,6 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-
-    #TODO: package overlay
-    #core
-    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh
-
-    #user
-    sudo firefox git qtile alacritty rustup python3 nushell neo-cowsay
-    fcitx fcitx-engines.chewing fcitx-engines.table-extra
-    pamixer
-
-    #develop
-    autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
-    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
-    pkg-config openssl
-
-    kind docker kubectl
-  ];
 
   programs.zsh.enable = true;
   programs.zsh.ohMyZsh = {
@@ -184,5 +176,15 @@
 
   # TODO: move on and keep OS rolling 
   system.stateVersion = "20.03"; 
+
+  # Nix Community
+  # nix-envdir
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
+  environment.pathsToLink = [
+    "/share/nix-direnv"
+  ];
 }
 
