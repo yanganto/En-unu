@@ -7,32 +7,51 @@
     ./hardware-configuration.nix
     ./interfaces.nix
     ./video-card.nix
+    ./hypervisor.nix
     ../../Sekreto/networks.nix
+    ../../Sekreto/vpn.nix
   ];
   environment.systemPackages = with pkgs; [
     #TODO: package overlay
-    #core
+
+    # Core
     wget neovim wpa_supplicant ripgrep zsh oh-my-zsh busybox
-    enlightenment.terminology pciutils
+    enlightenment.terminology pciutils usbutils
 
-    #user
-    sudo firefox git qtile alacritty rustup python3 nushell neo-cowsay
-    fcitx fcitx-engines.chewing fcitx-engines.table-extra
-    
-    # TODO: Porting ibus-array 
-    # ibus ibus-engines.table  
+    # User
+    ## Cli
+    sudo exa fd nushell neo-cowsay bat busybox openconnect
 
-    # TODO: wait hime merge 
-    # hime = import ./hime/default.nix;  # use this when hime merged
-    pamixer xdotool
+    ## Desktop
+    usbutils pciutils python3 qtile xdotool leafpad pcmanfm 
+    # TODO: uncomment this when the PR merged
+    # https://github.com/NixOS/nixpkgs/pull/100002
+    alacritty pamixer # find-cursor
+    firefox chromium thunderbird 
+    # TODO: Porting ibus-array for nixOS
+    hime # ibus ibus-engines.array
+    tdesktop zoom-us discord
+    texlive.combined.scheme-full libreoffice kate 
+    trezord trezor_agent
 
-    # linux develop
+    # Developer
+    ## Linux develop
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
     gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
-    pkg-config openssl pypi2nix
+    pkg-config openssl protobuf direnv universal-ctags
+    # TODO: uncomment this officially release
+    git # gitui 
+    ## Rust develop
+    rust-analyzer rustup sccache
 
-    # cloud develop
+    ## Python develop
+    pypi2nix python38Packages.python-language-server
+
+    ## Cloud develop
     kind docker kubectl
+
+    ## Nix package develop
+    nixpkgs-fmt
   ];
 
   fileSystems."/home/yanganto/data" = {
@@ -61,8 +80,7 @@
   i18n = {
     defaultLocale = "en_US.UTF-8";
     inputMethod = {
-      enabled = "fcitx";
-      fcitx.engines = with pkgs.fcitx-engines; [ chewing table-extra ];
+      enabled = "hime";
       # enabled = "ibus"; 
       # ibus.engines = with pkgs.ibus-engines; [ table ];
     };
@@ -75,8 +93,9 @@
     timeZone = "Asia/Taipei";
     hardwareClockInLocalTime = false;
   };
+  # TODO: font overlay
   fonts = {
-    enableFontDir = true;
+    fontDir.enable = true;
     enableGhostscriptFonts = true;
     fontconfig = {
       enable = true;
@@ -104,25 +123,15 @@
 
     fonts = with pkgs; [
       iosevka inconsolata unifont
-
       terminus_font terminus_font_ttf
-
       anonymousPro source-code-pro meslo-lg
-
       wqy_microhei wqy_zenhei
-
       fira fira-code fira-mono
-
       noto-fonts noto-fonts-cjk
-
       siji font-awesome-ttf
-
       powerline-fonts
     ];
   };
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
 
   programs.zsh.enable = true;
   programs.zsh.ohMyZsh = {
@@ -174,7 +183,7 @@
     };
   };
 
-  # TODO: move on and keep OS rolling 
+  # TODO: move on unstable and keep NixOS rolling 
   system.stateVersion = "20.03"; 
 
   # Nix Community
