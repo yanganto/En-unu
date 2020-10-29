@@ -22,6 +22,12 @@
     ## Cli
     sudo exa fd nushell neo-cowsay bat busybox openconnect
 
+    ## Xorg
+    # us startx as display manager
+    # xorg.xorgserver
+    # xorg.xf86inputevdev xorg.xf86inputsynaptics xorg.xf86inputlibinput
+    # xorg.xf86videointel xorg.xf86videonouveau
+
     ## Desktop
     usbutils pciutils python3 qtile xdotool leafpad pcmanfm 
     # TODO: uncomment this when the PR merged
@@ -38,7 +44,7 @@
     ## Linux develop
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
     gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
-    pkg-config openssl protobuf direnv universal-ctags
+    pkg-config openssl protobuf direnv universal-ctags htop
     # TODO: uncomment this officially release
     git # gitui 
     ## Rust develop
@@ -148,10 +154,13 @@
   services.xserver.xkbOptions = "eurosign:e";
   services.xserver.libinput.enable = true;
   services.xserver.windowManager.qtile.enable = true;
+  # services.xserver.displayManager.startx.enable = true;
 
   sound.enable = true;
   hardware.pulseaudio.enable = true;
 
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport = true;
 
   # TODO User overlay 
   # Define a user account. Don't forget to set a password with ‘passwd’.
