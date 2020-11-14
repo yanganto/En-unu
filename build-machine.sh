@@ -37,10 +37,11 @@ echo "Configuration file: $CONFIG_FILE"
 
 if [ $# -gt 1 ]; then
     Msg "Exec nixos-rebuild $2"
-    NIXOS_CONFIG=$CONFIG_FILE nixos-rebuild $2 # --max-jobs 1
+    NIXOS_CONFIG=$CONFIG_FILE nixos-rebuild $2
+    # --max-jobs 1
 else
     Msg "Exec nixos-rebuild switch"
-    NIXOS_CONFIG=$CONFIG_FILE nixos-rebuild switch 
+    NIXOS_CONFIG=$CONFIG_FILE nixos-rebuild switch
 fi
 Check $? "Ok" "NixOs rebuild fail"
 
