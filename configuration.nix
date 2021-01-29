@@ -1,26 +1,42 @@
 { config, pkgs, ... }:
-
 {
   nixpkgs.config.allowUnfree = true;
 
-  imports = [ 
+  imports = [
     ./hardware-configuration.nix
     ./interfaces.nix
     ./video-card.nix
     ./hypervisor.nix
     ../../Sekreto/networks.nix
     ../../Sekreto/vpn.nix
+    ../../Sekreto/proxy.nix
   ];
   environment.systemPackages = with pkgs; [
     #TODO: package overlay
 
     # Core
-    wget neovim wpa_supplicant ripgrep zsh oh-my-zsh busybox
-    enlightenment.terminology pciutils usbutils
+    wget
+    wpa_supplicant
+    ripgrep
+    busybox
+    neovim
+    enlightenment.terminology
+    pciutils
+    usbutils
+    zsh
+    zplug
+    oh-my-zsh
 
     # User
     ## Cli
-    sudo exa fd nushell neo-cowsay bat busybox openconnect
+    sudo
+    exa
+    fd
+    nushell
+    neo-cowsay
+    bat
+    busybox
+    openconnect
 
     ## Xorg
     # use startx as display manager
@@ -30,34 +46,84 @@
     # linuxPackages.bbswitch
 
     ## Desktop
-    usbutils pciutils python3 qtile xdotool leafpad pcmanfm rofi
-    alacritty pamixer bluez #find-cursor
-    firefox chromium thunderbird
+    usbutils
+    pciutils
+    python3
+    qtile
+    xdotool
+    leafpad
+    pcmanfm
+    rofi
+    feh
+    alacritty
+    pamixer
+    bluez #find-cursor
+    firefox
+    chromium
+    thunderbird
     # TODO: Porting ibus-array for nixOS
     hime # ibus ibus-engines.array
     # fcitx fcitx-engines.rime
-    tdesktop zoom-us discord
-    texlive.combined.scheme-full libreoffice kate
-    trezord trezor_agent
+    tdesktop
+    zoom-us
+    discord
+    texlive.combined.scheme-full
+    libreoffice
+    kate
+    gnupg
+    trezord
+    trezor_agent
+    trezor-udev-rules
 
     # Developer
     ## Linux develop
-    autoconf automake binutils bison fakeroot file findutils flex gawk gcc 
-    gettext groff libtool gnum4 gnustep.make gnupatch pkgconf texinfo 
-    pkg-config openssl protobuf direnv universal-ctags htop
-    # TODO: uncomment this officially release
-    git # gitui 
+    autoconf
+    automake
+    binutils
+    bison
+    fakeroot
+    file
+    findutils
+    flex
+    gawk
+    gcc
+    gettext
+    groff
+    libtool
+    gnum4
+    gnustep.make
+    gnupatch
+    pkgconf
+    texinfo
+    pkg-config
+    openssl
+    protobuf
+    direnv
+    universal-ctags
+    htop
+    lorri
+    git
+    gitAndTools.gitui
+    gping
     ## Rust develop
-    rust-analyzer rustup sccache
+    rust-analyzer
+    rustup
+    sccache
 
     ## Python develop
-    pypi2nix python38Packages.python-language-server
+    pypi2nix
+    python38Packages.python-language-server
 
     ## Cloud develop
-    kind docker kubectl
+    kind
+    docker
+    kubectl
 
     ## Nix package develop
     nixpkgs-fmt
+
+    ## Web develop
+    nodePackages.typescript
   ];
 
   fileSystems."/home/yanganto/data" = {
@@ -132,13 +198,23 @@
     };
 
     fonts = with pkgs; [
-      iosevka inconsolata unifont
-      terminus_font terminus_font_ttf
-      anonymousPro source-code-pro meslo-lg
-      wqy_microhei wqy_zenhei
-      fira fira-code fira-mono
-      noto-fonts noto-fonts-cjk
-      siji font-awesome-ttf
+      iosevka
+      inconsolata
+      unifont
+      terminus_font
+      terminus_font_ttf
+      anonymousPro
+      source-code-pro
+      meslo-lg
+      wqy_microhei
+      wqy_zenhei
+      fira
+      fira-code
+      fira-mono
+      noto-fonts
+      noto-fonts-cjk
+      siji
+      font-awesome-ttf
       powerline-fonts
     ];
   };
@@ -159,6 +235,7 @@
   services.xserver.libinput.enable = true;
   services.xserver.windowManager.qtile.enable = true;
   services.lorri.enable = true;
+  services.trezord.enable = true;
   # TODO:
   # port nvidia-xrun on NixOS
   # services.xserver.displayManager.startx.enable = true;
@@ -213,4 +290,3 @@
     "/share/nix-direnv"
   ];
 }
-
